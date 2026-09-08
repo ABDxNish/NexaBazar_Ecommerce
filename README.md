@@ -1,25 +1,4 @@
-# NexaBazar — Full-Stack E-commerce Project
 
-NexaBazar is a complete portfolio-style e-commerce application built to stay close to the coding level and technology pattern of the **AdminPOV** project while improving the architecture, validation, security boundaries and feature completeness.
-
-The project is split exactly into two main applications:
-
-```text
-NexaBazar/
-├── backend/      # NestJS + PostgreSQL + TypeORM
-├── frontend/     # Next.js + React + TypeScript + Tailwind CSS
-├── database/     # Small PostgreSQL helper SQL
-├── docs/         # Architecture, payment and asset explanations
-└── README.md
-```
-
-## Application name
-
-**Recommended name: NexaBazar**
-
-It works well for a modern Bangladesh-focused multi-category e-commerce store and is already used throughout the source code and visual assets.
-
-Alternative names if you want to rename it later: **BazarNext**, **NexaMart**, **UrbanBazar**, **ShopNexa**, **BongoCart**.
 
 ---
 
