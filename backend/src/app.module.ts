@@ -1,7 +1,16 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+
+import {
+  ConfigModule,
+  ConfigService,
+} from '@nestjs/config';
+
+import {
+  TypeOrmModule,
+} from '@nestjs/typeorm';
+
 import { AppController } from './app.controller';
+
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { CategoriesModule } from './categories/categories.module';
@@ -16,20 +25,93 @@ import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get<string>('DB_HOST') || 'localhost',
-        port: Number(config.get<string>('DB_PORT') || 5432),
-        username: config.get<string>('DB_USERNAME') || 'postgres',
-        password: config.get<string>('DB_PASSWORD') || 'postgres',
-        database: config.get<string>('DB_NAME') || 'nexabazar',
-        autoLoadEntities: true,
-        synchronize: config.get<string>('DB_SYNCHRONIZE') !== 'false',
-      }),
+    ConfigModule.forRoot({
+      isGlobal: true,
     }),
+
+    TypeOrmModule.forRootAsync({
+      inject: [
+        ConfigService,
+      ],
+
+      useFactory: (
+        config:
+          ConfigService,
+      ) => {
+        const dbSsl =
+          config.get<string>(
+            'DB_SSL',
+          ) === 'true';
+
+        return {
+          type:
+            'postgres' as const,
+
+          host:
+            config.get<string>(
+              'DB_HOST',
+            ) ||
+            'localhost',
+
+          port:
+            Number(
+              config.get<string>(
+                'DB_PORT',
+              ) ||
+                5432,
+            ),
+
+          username:
+            config.get<string>(
+              'DB_USERNAME',
+            ) ||
+            'postgres',
+
+          password:
+            config.get<string>(
+              'DB_PASSWORD',
+            ) ||
+            'postgres',
+
+          database:
+            config.get<string>(
+              'DB_NAME',
+            ) ||
+            'nexabazar',
+
+          /*
+           * Neon requires SSL.
+           */
+          ssl: dbSsl
+            ? {
+                rejectUnauthorized:
+                  false,
+              }
+            : false,
+
+          autoLoadEntities:
+            true,
+
+          /*
+           * IMPORTANT:
+           *
+           * Synchronization now happens
+           * ONLY when explicitly true.
+           *
+           * Local:
+           * DB_SYNCHRONIZE=true
+           *
+           * Production:
+           * DB_SYNCHRONIZE=false
+           */
+          synchronize:
+            config.get<string>(
+              'DB_SYNCHRONIZE',
+            ) === 'true',
+        };
+      },
+    }),
+
     NotificationsModule,
     MailModule,
     UsersModule,
@@ -42,6 +124,9 @@ import { SeedModule } from './seed/seed.module';
     PaymentsModule,
     SeedModule,
   ],
-  controllers: [AppController],
+
+  controllers: [
+    AppController,
+  ],
 })
 export class AppModule {}
