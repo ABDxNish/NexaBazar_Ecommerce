@@ -1,0 +1,5 @@
+'use client';
+import { useEffect,useState } from 'react';
+import Link from 'next/link';
+import { CheckCircle2 } from 'lucide-react';
+export default function PaymentSuccess(){const [order,setOrder]=useState('');useEffect(()=>{setOrder(new URLSearchParams(window.location.search).get('order')||'')},[]);return <div className="shell py-24"><div className="mx-auto max-w-xl rounded-[30px] border border-emerald-200 bg-white p-8 text-center shadow-sm md:p-12"><CheckCircle2 className="mx-auto h-14 w-14 text-emerald-600"/><p className="mt-5 text-xs font-bold tracking-[.2em] text-emerald-700">PAYMENT VALIDATED</p><h1 className="mt-2 text-3xl font-black">Payment successful</h1><p className="mt-3 text-sm leading-6 text-slate-500">SSLCOMMERZ returned the payment to the backend, and the backend validated transaction ID, BDT amount and status before marking the order paid.</p>{order&&<p className="mt-4 rounded-xl bg-slate-50 p-3 text-sm font-bold">{order}</p>}<div className="mt-7 flex justify-center gap-3"><Link href="/account/orders" className="btn-primary">View orders</Link><Link href="/products" className="btn-secondary">Continue shopping</Link></div></div></div>}

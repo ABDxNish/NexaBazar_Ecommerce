@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #111827;
+  --muted: #667085;
+  --accent: #7c3aed;
+  --accent-soft: #ede9fe;
+  --surface: #ffffff;
+  --paper: #f6f7fb;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: #fbfbfd;
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+::selection { background: #ddd6fe; color: #312e81; }
+
+.shell { width: min(1440px, calc(100% - 32px)); margin-inline: auto; }
+@media (min-width: 768px) { .shell { width: min(1440px, calc(100% - 64px)); } }
+
+.glass {
+  background: rgba(255,255,255,.86);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(17,24,39,.08);
+}
+
+.hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+
+.card-lift { transition: transform .25s ease, box-shadow .25s ease; }
+.card-lift:hover { transform: translateY(-5px); box-shadow: 0 22px 55px rgba(17,24,39,.10); }
+
+.input {
+  width: 100%;
+  border: 1px solid #d0d5dd;
+  border-radius: 14px;
+  background: white;
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.input:focus { border-color: #8b5cf6; box-shadow: 0 0 0 4px rgba(139,92,246,.12); }
+.input-error { border-color: #f43f5e; }
+
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: 999px; background: #111827; color: white; padding: 12px 20px;
+  font-weight: 700; transition: transform .2s ease, background .2s ease;
+}
+.btn-primary:hover { transform: translateY(-1px); background: #292f3d; }
+.btn-secondary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: 999px; border: 1px solid #d0d5dd; background: white; padding: 11px 19px;
+  font-weight: 700; transition: background .2s ease;
+}
+.btn-secondary:hover { background: #f8fafc; }
+
+.animate-fade-up { animation: fadeUp .65s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulseSoft { 0%,100% { transform: scale(1); opacity: .8; } 50% { transform: scale(1.08); opacity: 1; } }
+.pulse-soft { animation: pulseSoft 3s ease-in-out infinite; }

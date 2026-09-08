@@ -1,0 +1,3 @@
+import Link from 'next/link';
+import { XCircle } from 'lucide-react';
+export default function PaymentFail(){return <div className="shell py-24"><div className="mx-auto max-w-xl rounded-[30px] border border-rose-200 bg-white p-8 text-center shadow-sm md:p-12"><XCircle className="mx-auto h-14 w-14 text-rose-600"/><p className="mt-5 text-xs font-bold tracking-[.2em] text-rose-700">PAYMENT NOT COMPLETED</p><h1 className="mt-2 text-3xl font-black">Payment failed</h1><p className="mt-3 text-sm leading-6 text-slate-500">Your order remains in your account. Open the order details page to retry SSLCOMMERZ with a new payment session.</p><Link href="/account/orders" className="btn-primary mt-7">Open my orders</Link></div></div>}

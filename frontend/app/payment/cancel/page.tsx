@@ -1,0 +1,3 @@
+import Link from 'next/link';
+import { CircleSlash2 } from 'lucide-react';
+export default function PaymentCancel(){return <div className="shell py-24"><div className="mx-auto max-w-xl rounded-[30px] border border-amber-200 bg-white p-8 text-center shadow-sm md:p-12"><CircleSlash2 className="mx-auto h-14 w-14 text-amber-600"/><p className="mt-5 text-xs font-bold tracking-[.2em] text-amber-700">PAYMENT CANCELLED</p><h1 className="mt-2 text-3xl font-black">You cancelled the gateway</h1><p className="mt-3 text-sm leading-6 text-slate-500">No paid status was recorded. You can retry from the order details page whenever you are ready.</p><Link href="/account/orders" className="btn-primary mt-7">Open my orders</Link></div></div>}

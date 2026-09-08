@@ -1,0 +1,24 @@
+'use client';
+
+import { useCallback, useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import { CreditCard, MapPin, Package, Truck } from 'lucide-react';
+import { api } from '@/lib/api';
+import { Order } from '@/lib/types';
+import { apiError, money } from '@/lib/utils';
+import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/context/ToastContext';
+import { useOrderRealtime } from '@/lib/useOrderRealtime';
+
+export default function OrderPage(){
+  const {id}=useParams<{id:string}>(); const {user,loading}=useAuth(); const {show}=useToast(); const [order,setOrder]=useState<Order|null>(null); const [busy,setBusy]=useState(false);
+  const load=useCallback(()=>{if(user&&id)api.get<Order>(`/orders/${id}`).then(r=>setOrder(r.data)).catch(()=>setOrder(null));},[user,id]);
+  useEffect(()=>{load();},[load]); useOrderRealtime(user?`user-${user.id}`:null,load);
+  const retry=async()=>{if(!order)return;setBusy(true);try{const r=await api.post(`/payments/sslcommerz/initiate/${order.id}`);window.location.href=r.data.gatewayUrl;}catch(e){show(apiError(e),'error');setBusy(false);}};
+  if(loading||!order)return <div className="shell py-16"><div className="h-[520px] animate-pulse rounded-[28px] bg-slate-200"/></div>;
+  return <div className="shell py-10 md:py-14"><Link href="/account/orders" className="text-sm font-bold text-violet-600">← Back to orders</Link><div className="mt-6 flex flex-col justify-between gap-4 md:flex-row md:items-end"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-violet-600">ORDER DETAILS</p><h1 className="mt-2 text-3xl font-black tracking-[-.04em] md:text-4xl">{order.orderNumber}</h1><p className="mt-2 text-sm text-slate-500">Placed {new Date(order.createdAt).toLocaleString()}</p></div><div className="flex gap-2"><span className="rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white">{order.status}</span><span className="rounded-full bg-violet-100 px-4 py-2 text-xs font-black text-violet-700">{order.paymentStatus}</span></div></div>
+  {order.paymentMethod==='SSLCOMMERZ'&&order.paymentStatus!=='PAID'&&<div className="mt-7 flex flex-col justify-between gap-4 rounded-[22px] border border-amber-200 bg-amber-50 p-5 sm:flex-row sm:items-center"><div><p className="font-bold text-amber-950">Online payment is not complete</p><p className="mt-1 text-sm text-amber-800">If the previous gateway attempt was cancelled or failed, you can create a new SSLCOMMERZ session.</p></div><button disabled={busy} onClick={retry} className="btn-primary whitespace-nowrap">{busy?'Starting...':'Retry payment'}</button></div>}
+  <div className="mt-7 grid gap-6 lg:grid-cols-[1fr_360px]"><section className="rounded-[26px] border border-black/8 bg-white p-6"><h2 className="flex items-center gap-2 text-lg font-black"><Package className="h-5 w-5"/> Items</h2><div className="mt-5 divide-y divide-black/5">{order.items.map(item=><div key={item.id} className="flex items-center gap-4 py-4"><img src={item.image||'/images/products/headphones.png'} alt="" className="h-20 w-20 rounded-2xl bg-slate-100 object-cover"/><div className="min-w-0 flex-1"><p className="font-bold">{item.productName}</p><p className="mt-1 text-sm text-slate-500">{money(item.unitPrice)} × {item.quantity}</p></div><p className="font-black">{money(item.unitPrice*item.quantity)}</p></div>)}</div></section>
+  <aside className="grid h-fit gap-4"><div className="rounded-[22px] bg-slate-950 p-5 text-white"><h3 className="flex items-center gap-2 font-bold"><MapPin className="h-4 w-4"/> Delivery</h3><p className="mt-4 text-sm font-semibold">{order.customerName}</p><p className="mt-1 text-sm leading-6 text-white/55">{order.address}<br/>{order.city} - {order.postcode}<br/>{order.phone}</p></div><div className="rounded-[22px] border border-black/8 bg-white p-5"><h3 className="flex items-center gap-2 font-bold"><CreditCard className="h-4 w-4"/> Payment</h3><p className="mt-3 text-sm text-slate-500">{order.paymentMethod} · {order.paymentStatus}</p><div className="my-4 h-px bg-slate-100"/><div className="grid gap-2 text-sm"><div className="flex justify-between"><span className="text-slate-500">Subtotal</span><span>{money(order.subtotal)}</span></div><div className="flex justify-between"><span className="text-slate-500">Shipping</span><span>{order.shippingFee?money(order.shippingFee):'Free'}</span></div><div className="mt-2 flex justify-between text-lg font-black"><span>Total</span><span>{money(order.total)}</span></div></div></div><div className="rounded-[22px] bg-violet-50 p-5"><p className="flex items-center gap-2 font-bold text-violet-950"><Truck className="h-4 w-4"/> Current status: {order.status}</p><p className="mt-2 text-xs leading-5 text-violet-700">When Pusher credentials are configured, this page refreshes when the admin updates the order.</p></div></aside></div></div>;
+}
